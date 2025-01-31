@@ -6,8 +6,11 @@ public class ExportObjectInfo : MonoBehaviour
 {
     void Start()
     {
-        // ファイル名をアタッチしたオブジェクトの名前に設定
-        string fileName = gameObject.name + ".txt";
+        // 現在の時間を取得してフォーマット
+        string timestamp = System.DateTime.Now.ToString("MMdd_HHmm");
+
+        // ファイル名をアタッチしたオブジェクトの名前に現在の時間を追加して設定
+        string fileName = $"{gameObject.name}_{timestamp}.txt";
 
         // ファイルパスを設定
         string filePath = Application.dataPath + "/" + fileName;
