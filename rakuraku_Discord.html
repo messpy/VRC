@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send Photos to Discord</title>
+    <style>
+        body {
+            background-color: #e0f7fa;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #00796b;
+        }
+        h2 {
+            color: #004d40;
+        }
+        button {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #b2dfdb;
+        }
+        button:hover:enabled {
+            background-color: #004d40;
+        }
+        input[type="text"], input[type="file"] {
+            padding: 8px;
+            border: 1px solid #b2dfdb;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 400px;
+        }
+        #statusMessage {
+            font-style: italic;
+            color: #00796b;
+        }
+    </style>
+</head>
+<body>
+    <h1>ディスコ画像便</h1>
+
+    <h2>Webhook Configuration</h2>
+    <label for="webhookInput">Enter Webhook URL:</label>
+    <input type="password" id="webhookInput" placeholder="Enter your Webhook URL" autocomplete="on">
+    <button id="saveWebhookButton">Save Webhook</button>
+    <p id="webhookStatus"></p>
+
+    <h2>Select a Folder</h2>
+    <input type="file" id="folderInput" webkitdirectory multiple>
+    <p id="selectedFolderName">No folder selected</p>
+
+    <h2>Options and Send</h2>
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <label for="forceSend" style="display: inline-block;">
+            <input type="checkbox" id="forceSend"> Force Resend
+        </label>
+        <button id="sendFolderButton" disabled>Send Folder Images</button>
+    </div>
+
+    <h2>Status</h2>
+    <p id="statusMessage">No task running</p>
+
+    <h2>Sent Files</h2>
+    <ul id="sentFilesList"></ul>
+
+    <h2>Skipped Files</h2>
+    <ul id="skippedFilesList"></ul>
+
+    <script>
+        const logFileName = 'sent_files_log.json';
+        let webhookUrl = localStorage.getItem('savedWebhookUrl') || '';
+        const MAX_DISCORD_PAYLOAD_SIZE = 25 * 1024 * 1024;
+        const MAX_FILES_PER_REQUEST = 10;
+
+        document.getElementById('webhookInput').value = webhookUrl;
+
+        async function getLog() {
+            const log = localStorage.getItem(logFileName);
+            return log ? JSON.parse(log) : {};
+        }
+
+        async function saveLog(log) {
+            localStorage.setItem(logFileName, JSON.stringify(log));
+        }
+
+        function updateStatusMessage(message) {
+            document.getElementById('statusMessage').textContent = message;
+        }
+
+        function updateSelectedFolderName(folderName) {
+            document.getElementById('selectedFolderName').textContent = `Selected folder: ${folderName}`;
+        }
+
+        function updateSentFilesList(sentFiles) {
+            const sentFilesList = document.getElementById('sentFilesList');
+            sentFilesList.innerHTML = '';
+            sentFiles.forEach(fileName => {
+                const listItem = document.createElement('li');
+                listItem.textContent = fileName;
+                sentFilesList.appendChild(listItem);
+            });
+        }
+
+        function updateSkippedFilesList(skippedFiles) {
+            const skippedFilesList = document.getElementById('skippedFilesList');
+            skippedFilesList.innerHTML = '';
+            skippedFiles.forEach(fileName => {
+                const listItem = document.createElement('li');
+                listItem.textContent = fileName;
+                skippedFilesList.appendChild(listItem);
+            });
+        }
+
+        function groupFilesBySizeAndCount(files) {
+            const groups = [];
+            let currentGroup = [];
+            let currentSize = 0;
+
+            for (const file of files) {
+                if (file.size > MAX_DISCORD_PAYLOAD_SIZE) {
+                    console.warn(`File "${file.name}" exceeds the maximum allowed size and will be skipped.`);
+                    continue;
+                }
+
+                if (currentSize + file.size > MAX_DISCORD_PAYLOAD_SIZE || currentGroup.length >= MAX_FILES_PER_REQUEST) {
+                    groups.push(currentGroup);
+                    currentGroup = [];
+                    currentSize = 0;
+                }
+
+                currentGroup.push(file);
+                currentSize += file.size;
+            }
+
+            if (currentGroup.length > 0) {
+                groups.push(currentGroup);
+            }
+
+            return groups;
+        }
+
+        async function sendFolderInfoToDiscord(folderName) {
+            const currentDate = new Date().toLocaleString();
+            const payload = {
+                content: `Selected folder: ${folderName}\nTimestamp: ${currentDate}`
+            };
+
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to send folder info. Status: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error sending folder info:', error);
+                throw error;
+            }
+        }
+
+        async function sendFilesToDiscord(files) {
+            const log = await getLog();
+            const forceSend = document.getElementById('forceSend').checked;
+            const sentFiles = [];
+            const skippedFiles = [];
+            const filesToSend = Array.from(files).filter(file => {
+                const fileKey = `${file.name}_${file.lastModified}`;
+                if (!forceSend && log[fileKey]) {
+                    skippedFiles.push(file.name);
+                    return false;
+                }
+                return true;
+            });
+
+            const fileGroups = groupFilesBySizeAndCount(filesToSend);
+            let groupCounter = 0;
+            const totalGroups = fileGroups.length;
+
+            for (const group of fileGroups) {
+                updateStatusMessage(`Sending group ${groupCounter + 1} of ${totalGroups}`);
+
+                const formData = new FormData();
+                group.forEach((file, index) => {
+                    formData.append(`files[${index}]`, file, file.name);
+                });
+
+                try {
+                    const response = await fetch(webhookUrl, { method: 'POST', body: formData });
+                    if (response.ok) {
+                        group.forEach(file => {
+                            const fileKey = `${file.name}_${file.lastModified}`;
+                            log[fileKey] = true;
+                            sentFiles.push(file.name);
+                        });
+                    } else {
+                        console.error(`Failed to send group ${groupCounter + 1}. Status: ${response.status}`);
+                    }
+                } catch (error) {
+                    console.error(`Error sending group ${groupCounter + 1}`, error);
+                }
+
+                groupCounter++;
+            }
+
+            await saveLog(log);
+            updateSentFilesList(sentFiles);
+            updateSkippedFilesList(skippedFiles);
+            updateStatusMessage(`Finished. Sent: ${sentFiles.length}, Skipped: ${skippedFiles.length}`);
+        }
+
+        document.getElementById('saveWebhookButton').addEventListener('click', () => {
+            webhookUrl = document.getElementById('webhookInput').value.trim();
+            if (webhookUrl) {
+                localStorage.setItem('savedWebhookUrl', webhookUrl);
+                document.getElementById('webhookStatus').textContent = 'Webhook URL saved.';
+                document.getElementById('sendFolderButton').disabled = false;
+            } else {
+                updateStatusMessage('Please enter a valid Webhook URL.');
+            }
+        });
+
+        document.getElementById('sendFolderButton').addEventListener('click', async () => {
+            const files = document.getElementById('folderInput').files;
+            if (files.length === 0) {
+                updateStatusMessage('No files selected.');
+                return;
+            }
+            try {
+                const folderName = files[0].webkitRelativePath.split('/')[0];
+                updateStatusMessage(`Sending folder info and files...`);
+                await sendFolderInfoToDiscord(folderName);
+                await sendFilesToDiscord(files);
+            } catch (error) {
+                console.error(error);
+                updateStatusMessage('Error occurred. Check console for details.');
+            }
+        });
+
+        document.getElementById('folderInput').addEventListener('change', () => {
+            const files = document.getElementById('folderInput').files;
+            if (files.length > 0) {
+                updateSelectedFolderName(files[0].webkitRelativePath.split('/')[0]);
+            } else {
+                updateSelectedFolderName('No folder selected');
+            }
+        });
+    </script>
+</body>
+</html>
