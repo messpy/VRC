@@ -22,7 +22,7 @@ public class ImportLoggerSystem : MonoBehaviour
             {
                 Directory.CreateDirectory(folderPath);
             }
-            filePath = Path.Combine(folderPath, "Assetsimport_log_" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
+            filePath = Path.Combine(folderPath, "Assetslog_" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
         }
         else
         {
@@ -60,8 +60,8 @@ public class ImportLoggerSystem : MonoBehaviour
 
 public class AssetLogger : AssetPostprocessor
 {
-    static string folderPath = Path.Combine(Application.dataPath, "Logs");
-    static string filePath = Path.Combine(folderPath, "combined_log_" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
+    static string folderPath = Path.Combine(Application.dataPath, "Assetslog");
+    static string filePath = Path.Combine(folderPath, "Assetslog_" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
 
     static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
     {
