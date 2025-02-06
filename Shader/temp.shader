@@ -1,4 +1,4 @@
-Shader "MyShader/ThermalVisionWithNoise"
+Shader "HoliShader/ThermalVisionWithNoise"
 {
     Properties
     {
