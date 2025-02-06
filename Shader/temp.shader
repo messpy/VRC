@@ -40,14 +40,16 @@ Shader "MyShader/ThermalVisionWithNoise"
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv;
+
+                // 法線をワールド空間に変換
                 o.worldNormal = normalize(mul((float3x3)unity_ObjectToWorld, v.normal));
                 
-                // デフォルトの光源方向（真上からの光を仮定）
-                float3 lightDir = normalize(float3(0.0, 1.0, 0.0));
-                
+                // ライトの方向を計算（方向性ライトとして扱う）
+                float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+
                 // 照明の影響を計算
-                o.lightIntensity = max(0, dot(o.worldNormal, lightDir));
-                
+                o.lightIntensity = max(0.0, dot(o.worldNormal, lightDir));
+
                 return o;
             }
 
