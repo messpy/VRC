@@ -1,4 +1,4 @@
-Shader "metaaaaaaaaaaaa/LookAtCenter"
+Shader "metaaaaaaaaaaaa/LookAtCenter_Fixed"
 {
     Properties
     {
@@ -26,7 +26,6 @@ Shader "metaaaaaaaaaaaa/LookAtCenter"
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
-                uint id : SV_VertexID;
             };
 
             struct v2f
@@ -43,39 +42,43 @@ Shader "metaaaaaaaaaaaa/LookAtCenter"
             float _HideSelf;
             fixed4 _Color;
 
-            float2 rot(float2 p, float r)
+            float3 rotateY(float3 pos, float angle)
             {
-                float c = cos(r);
-                float s = sin(r);
-                return mul(p, float2x2(c, -s, s, c));
+                float s = sin(angle);
+                float c = cos(angle);
+                return float3(
+                    c * pos.x - s * pos.z,
+                    pos.y,
+                    s * pos.x + c * pos.z
+                );
             }
 
-            v2f vert (appdata v)
+            v2f vert (appdata v, uint id : SV_VertexID)
             {
                 v2f o;
                 float PI = acos(-1.0);
                 
-                int index = v.id % 5;
-                float offsetX = (index - 2) * _Spacing; // 左右に5人並べる
+                int instanceID = id / 4; // 各オブジェクト単位のID
+                int rowID = instanceID % 5;
+                int sideID = instanceID / 5;
 
-                if (v.id == 0 && _HideSelf > 0.5)
+                float offsetX = (rowID - 2) * _Spacing;
+                float offsetZ = (sideID == 0) ? -_Dist : _Dist;
+
+                // 本体を消す処理
+                if (instanceID == 0 && _HideSelf > 0.5)
                 {
-                    // 本人を消す
                     v.vertex.xyz = float3(0, -9999, 0);
-                }
-                else if (v.id < 5)
-                {
-                    // 5人（中央を向く）
-                    v.vertex.x += offsetX;
-                    v.vertex.z -= _Dist;
-                    v.vertex.xz = rot(v.vertex.xz, atan2(-v.vertex.x, -v.vertex.z)); // 中央を向く
                 }
                 else
                 {
-                    // 反対側の5人（中央を向く）
+                    // 並べる
                     v.vertex.x += offsetX;
-                    v.vertex.z += _Dist;
-                    v.vertex.xz = rot(v.vertex.xz, atan2(-v.vertex.x, -v.vertex.z)); // 中央を向く
+                    v.vertex.z += offsetZ;
+
+                    // 回転して中央を見る
+                    float lookAtAngle = atan2(-v.vertex.x, -v.vertex.z);
+                    v.vertex.xyz = rotateY(v.vertex.xyz, lookAtAngle);
                 }
 
                 o.vertex = UnityObjectToClipPos(v.vertex);
