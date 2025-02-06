@@ -1,4 +1,4 @@
-Shader "metaaaaaaaaaaaa/Aligned"
+Shader "metaaaaaaaaaaaa/ParallelRows_Fixed"
 {
     Properties
     {
@@ -12,7 +12,7 @@ Shader "metaaaaaaaaaaaa/Aligned"
         Tags { "RenderType"="Opaque" }
         LOD 100
 
-        Pass // 並列コピー
+        Pass // 正しく5人×2列を配置
         {
             CGPROGRAM
             #pragma vertex vert
@@ -24,6 +24,7 @@ Shader "metaaaaaaaaaaaa/Aligned"
             struct appdata
             {
                 float4 vertex : POSITION;
+                float3 normal : NORMAL;
                 float2 uv : TEXCOORD0;
                 uint id : SV_VertexID;
             };
@@ -40,31 +41,41 @@ Shader "metaaaaaaaaaaaa/Aligned"
             float _Spacing;
             fixed4 _Color;
 
+            float3 rotateY(float3 pos, float angle)
+            {
+                float s = sin(angle);
+                float c = cos(angle);
+                return float3(
+                    c * pos.x - s * pos.z,
+                    pos.y,
+                    s * pos.x + c * pos.z
+                );
+            }
+
             v2f vert (appdata v, uint id : SV_VertexID)
             {
                 v2f o;
                 
-                // 5人ずつ並べるためのID計算
-                int index = id % 5;  // 0~4 のループ
-                int row = id / 5;  // 0 or 1（前列 or 後列）
+                // インスタンス単位で処理する
+                int instanceID = id / 4; // 各オブジェクト単位のID
+                int rowID = instanceID % 5; // 0~4（並ぶ位置）
+                int sideID = instanceID / 5; // 0 = 手前, 1 = 奥
 
-                // 配置調整
-                float offsetX = (index - 2) * _Spacing; // 横に5人並ぶ
-                float offsetZ = (row == 0) ? -_Dist : _Dist; // 前列は手前、後列は奥に配置
+                float offsetX = (rowID - 2) * _Spacing; // 横に5人並ぶ
+                float offsetZ = (sideID == 0) ? -_Dist : _Dist; // 手前と奥のグループ分け
 
-                // 位置を適用
-                v.vertex.x += offsetX;
-                v.vertex.z += offsetZ;
+                // メッシュ全体を移動
+                float3 basePos = v.vertex.xyz;
+                basePos.x += offsetX;
+                basePos.z += offsetZ;
 
-                // **向きの調整**
-                if (row == 0)
+                // 角度調整（向かい合わせる）
+                if (sideID == 1)
                 {
-                    v.vertex.z -= 0.2; // 手前グループは少し奥に移動（誤差補正）
+                    basePos = rotateY(basePos, 3.14159); // 180度回転
                 }
-                else
-                {
-                    v.vertex.z += 0.2; // 奥グループは少し手前に移動（誤差補正）
-                }
+
+                v.vertex.xyz = basePos;
 
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
