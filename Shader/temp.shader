@@ -14,9 +14,9 @@ Shader "HoliShader/ThermalVisionWithNoise"
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            
+
             #include "UnityCG.cginc"
-            
+
             sampler2D _MainTex;
             float _NoiseStrength;
 
@@ -43,7 +43,7 @@ Shader "HoliShader/ThermalVisionWithNoise"
 
                 // 法線をワールド空間に変換
                 o.worldNormal = normalize(mul((float3x3)unity_ObjectToWorld, v.normal));
-                
+
                 // ライトの方向を計算（方向性ライトとして扱う）
                 float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
 
@@ -56,10 +56,10 @@ Shader "HoliShader/ThermalVisionWithNoise"
             // サーモグラフィーの色を決める関数
             fixed4 getThermalColor(float intensity)
             {
-                if (intensity > 0.8) return fixed4(1.0, 0.0, 0.0, 1.0); // 赤
-                if (intensity > 0.6) return fixed4(1.0, 0.5, 0.0, 1.0); // オレンジ
-                if (intensity > 0.4) return fixed4(1.0, 1.0, 0.0, 1.0); // 黄
-                if (intensity > 0.2) return fixed4(0.0, 1.0, 1.0, 1.0); // 水色
+                if (intensity > 0.85) return fixed4(1.0, 0.0, 0.0, 1.0); // 赤
+                if (intensity > 0.70) return fixed4(1.0, 0.5, 0.0, 1.0); // オレンジ
+                if (intensity > 0.55) return fixed4(1.0, 1.0, 0.0, 1.0); // 黄
+                if (intensity > 0.40) return fixed4(0.0, 1.0, 1.0, 1.0); // 水色
                 return fixed4(0.2, 0.2, 0.5, 1.0); // デフォルトを暗めの青紫に
             }
 
@@ -80,6 +80,7 @@ Shader "HoliShader/ThermalVisionWithNoise"
                 float noise = random(i.uv * (_Time.y * 0.1)) * _NoiseStrength;
                 thermalColor.rgb += noise;
 
+                // 色を加算して最終的な出力を決定
                 return thermalColor;
             }
             ENDCG
