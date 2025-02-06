@@ -15,6 +15,8 @@ Shader "MyShader/ThermalVisionWithNoise"
             #pragma vertex vert
             #pragma fragment frag
             
+            #include "UnityCG.cginc"
+            
             sampler2D _MainTex;
             float _NoiseStrength;
 
@@ -38,12 +40,14 @@ Shader "MyShader/ThermalVisionWithNoise"
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.uv = v.uv;
-                o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                o.worldNormal = normalize(mul((float3x3)unity_ObjectToWorld, v.normal));
                 
-                // 照明の影響を取得
-                float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+                // デフォルトの光源方向（真上からの光を仮定）
+                float3 lightDir = normalize(float3(0.0, 1.0, 0.0));
+                
+                // 照明の影響を計算
                 o.lightIntensity = max(0, dot(o.worldNormal, lightDir));
-
+                
                 return o;
             }
 
@@ -54,7 +58,7 @@ Shader "MyShader/ThermalVisionWithNoise"
                 if (intensity > 0.6) return fixed4(1.0, 0.5, 0.0, 1.0); // オレンジ
                 if (intensity > 0.4) return fixed4(1.0, 1.0, 0.0, 1.0); // 黄
                 if (intensity > 0.2) return fixed4(0.0, 1.0, 1.0, 1.0); // 水色
-                return fixed4(0.0, 0.0, 1.0, 1.0); // 青
+                return fixed4(0.2, 0.2, 0.5, 1.0); // デフォルトを暗めの青紫に
             }
 
             // ノイズ生成関数
@@ -70,8 +74,8 @@ Shader "MyShader/ThermalVisionWithNoise"
                 // 明るさに応じて色を変える
                 fixed4 thermalColor = getThermalColor(i.lightIntensity);
 
-                // ノイズを追加（UV座標を使って疑似ランダム値を生成）
-                float noise = random(i.uv * _Time.y) * _NoiseStrength;
+                // ノイズを追加（時間変化を追加し、UV座標の影響を調整）
+                float noise = random(i.uv * (_Time.y * 0.1)) * _NoiseStrength;
                 thermalColor.rgb += noise;
 
                 return thermalColor;
