@@ -1,4 +1,4 @@
-Shader "metaaaaaaaaaaaa/ParallelRows_Fixed"
+Shader "metaaaaaaaaaaaa/Ps_Fixed"
 {
     Properties
     {
