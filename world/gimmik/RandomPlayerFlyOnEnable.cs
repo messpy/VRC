@@ -5,11 +5,10 @@ using VRC.Udon;
 
 public class RandomPlayerFlyOnEnable : UdonSharpBehaviour
 {
-    public float delayTime = 10.0f; // 実行を遅らせる時間 (秒)
-    public Vector3 teleportOffset = new Vector3(0, 2, 0); // テレポート時のオフセット
-    public Vector3 moveDirection = new Vector3(0, 0, 1); // 移動方向 (例: 前方)
-    public float moveDistance = 5.0f; // 移動距離 (m)
-    public float moveSpeed = 1.0f; // 移動速度 (m/s)
+    public float delayTime = 1.0f; // 実行を遅らせる時間 (秒)
+    public GameObject object1; // 開始位置
+    public GameObject object2; // 目標位置
+    public float moveDuration = 3.0f; // 移動時間 (秒)
     public float returnDelay = 3.0f; // 元の位置に戻るまでの待機時間 (秒)
 
     private VRCPlayerApi selectedPlayer;
@@ -20,7 +19,7 @@ public class RandomPlayerFlyOnEnable : UdonSharpBehaviour
 
     void OnEnable()
     {
-        // 10秒後に処理を実行
+        // 指定時間後に処理を実行
         SendCustomEventDelayedSeconds("SelectAndMovePlayer", delayTime);
     }
 
@@ -50,19 +49,22 @@ public class RandomPlayerFlyOnEnable : UdonSharpBehaviour
 
         Debug.Log("選ばれたプレイヤー: " + selectedPlayer.displayName);
 
-        // 現在の位置を保存（元の位置に戻すため）
-        originalPosition = selectedPlayer.GetPosition();
+        // `object1` から `object2` に移動
+        if (object1 == null || object2 == null)
+        {
+            Debug.Log("オブジェクトの参照が設定されていません！");
+            return;
+        }
 
-        // テレポート位置を計算（元の位置 + teleportOffset）
-        Vector3 teleportPosition = originalPosition + teleportOffset;
-        selectedPlayer.TeleportTo(teleportPosition, Quaternion.identity);
+        originalPosition = object1.transform.position;
+        targetPosition = object2.transform.position;
 
-        // 移動の準備
-        targetPosition = teleportPosition + moveDirection.normalized * moveDistance;
-        isMoving = true;
-        moveStartTime = Time.time;
+        // プレイヤーを `object1` の位置にテレポート
+        selectedPlayer.TeleportTo(originalPosition, Quaternion.identity);
 
         // 移動開始
+        isMoving = true;
+        moveStartTime = Time.time;
         SendCustomEvent("MovePlayer");
     }
 
@@ -71,11 +73,11 @@ public class RandomPlayerFlyOnEnable : UdonSharpBehaviour
         if (isMoving && selectedPlayer != null)
         {
             float elapsedTime = Time.time - moveStartTime;
-            float progress = elapsedTime * moveSpeed / moveDistance; // 進行度 (0.0～1.0)
+            float progress = elapsedTime / moveDuration; // 進行度 (0.0～1.0)
 
             if (progress < 1.0f)
             {
-                Vector3 newPosition = Vector3.Lerp(originalPosition + teleportOffset, targetPosition, progress);
+                Vector3 newPosition = Vector3.Lerp(originalPosition, targetPosition, progress);
                 selectedPlayer.TeleportTo(newPosition, selectedPlayer.GetRotation());
 
                 // 次のフレームも移動を続ける
