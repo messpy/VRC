@@ -10,22 +10,23 @@ public class RandomPlayerFlyOnEnable : UdonSharpBehaviour
     public GameObject object2; // 目標位置
     public float moveDuration = 3.0f; // 移動時間 (秒)
     public float returnDelay = 3.0f; // 元の位置に戻るまでの待機時間 (秒)
+    public Vector3 rotationAmount = Vector3.zero; // ユーザーが設定する回転量 (X, Y, Z)
 
     private VRCPlayerApi selectedPlayer;
     private Vector3 originalPosition;
+    private Quaternion originalRotation;
     private Vector3 targetPosition;
+    private Quaternion targetRotation;
     private bool isMoving = false;
     private float moveStartTime;
 
     void OnEnable()
     {
-        // 指定時間後に処理を実行
         SendCustomEventDelayedSeconds("SelectAndMovePlayer", delayTime);
     }
 
     public void SelectAndMovePlayer()
     {
-        // プレイヤー数を取得
         int playerCount = VRCPlayerApi.GetPlayerCount();
         if (playerCount == 0)
         {
@@ -33,11 +34,9 @@ public class RandomPlayerFlyOnEnable : UdonSharpBehaviour
             return;
         }
 
-        // プレイヤーリストを取得
         VRCPlayerApi[] players = new VRCPlayerApi[playerCount];
         VRCPlayerApi.GetPlayers(players);
 
-        // ランダムに1人選択
         int randomIndex = Random.Range(0, playerCount);
         selectedPlayer = players[randomIndex];
 
@@ -49,18 +48,24 @@ public class RandomPlayerFlyOnEnable : UdonSharpBehaviour
 
         Debug.Log("選ばれたプレイヤー: " + selectedPlayer.displayName);
 
-        // `object1` から `object2` に移動
         if (object1 == null || object2 == null)
         {
             Debug.Log("オブジェクトの参照が設定されていません！");
             return;
         }
 
-        originalPosition = object1.transform.position;
-        targetPosition = object2.transform.position;
+        // プレイヤーの現在位置と回転を記録
+        originalPosition = selectedPlayer.GetPosition();
+        originalRotation = selectedPlayer.GetRotation();
 
-        // プレイヤーを `object1` の位置にテレポート
-        selectedPlayer.TeleportTo(originalPosition, Quaternion.identity);
+        // 開始地点と目標地点の位置・回転を取得
+        Vector3 startPosition = object1.transform.position;
+        Quaternion startRotation = object1.transform.rotation;
+        targetPosition = object2.transform.position;
+        targetRotation = object2.transform.rotation * Quaternion.Euler(rotationAmount);
+
+        // プレイヤーを開始位置にテレポート
+        selectedPlayer.TeleportTo(startPosition, startRotation);
 
         // 移動開始
         isMoving = true;
@@ -73,23 +78,21 @@ public class RandomPlayerFlyOnEnable : UdonSharpBehaviour
         if (isMoving && selectedPlayer != null)
         {
             float elapsedTime = Time.time - moveStartTime;
-            float progress = elapsedTime / moveDuration; // 進行度 (0.0～1.0)
+            float progress = elapsedTime / moveDuration;
 
             if (progress < 1.0f)
             {
-                Vector3 newPosition = Vector3.Lerp(originalPosition, targetPosition, progress);
-                selectedPlayer.TeleportTo(newPosition, selectedPlayer.GetRotation());
+                Vector3 newPosition = Vector3.Lerp(object1.transform.position, targetPosition, progress);
+                Quaternion newRotation = Quaternion.Slerp(object1.transform.rotation, targetRotation, progress);
+                selectedPlayer.TeleportTo(newPosition, newRotation);
 
-                // 次のフレームも移動を続ける
                 SendCustomEventDelayedFrames("MovePlayer", 1);
             }
             else
             {
-                // 移動完了
-                selectedPlayer.TeleportTo(targetPosition, selectedPlayer.GetRotation());
+                selectedPlayer.TeleportTo(targetPosition, targetRotation);
                 isMoving = false;
 
-                // 一定時間後に元の位置に戻す
                 SendCustomEventDelayedSeconds("ReturnPlayer", returnDelay);
             }
         }
@@ -99,7 +102,7 @@ public class RandomPlayerFlyOnEnable : UdonSharpBehaviour
     {
         if (selectedPlayer != null)
         {
-            selectedPlayer.TeleportTo(originalPosition, selectedPlayer.GetRotation());
+            selectedPlayer.TeleportTo(originalPosition, originalRotation);
             Debug.Log("プレイヤーが元の位置に戻りました。");
         }
     }
