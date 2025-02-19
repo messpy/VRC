@@ -50,7 +50,7 @@ public class effecttimes : UdonSharpBehaviour
                 Debug.Log("[effecttimes] " + obj.name + " 発動！ (" + elapsedTime + " 秒)");
 
                 SendCustomEventDelayedSeconds(deactivateEvent, effectDuration);
-                
+
                 times.RemoveAt(i); // リストから削除して無駄なチェックを減らす
                 return; // 1つ発動したら次のフレームで処理
             }
