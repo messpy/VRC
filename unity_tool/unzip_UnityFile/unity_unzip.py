@@ -42,13 +42,13 @@ os.makedirs(outputDir, exist_ok=True)
 # `.zip` を解凍する関数（無限ループ防止）
 def extract_zip(zip_path, extract_to):
     if zip_path in extracted_zips:
-        write_log(f"⚠ Already extracted: {zip_path}")
+        write_log(f" Already extracted: {zip_path}")
         return
 
     try:
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(extract_to)
-        write_log(f"✅ Extracted ZIP: {zip_path} → {extract_to}")
+        write_log(f" Extracted ZIP: {zip_path} → {extract_to}")
 
         # 解凍済みリストに追加
         extracted_zips.add(zip_path)
@@ -56,7 +56,7 @@ def extract_zip(zip_path, extract_to):
             f.write(zip_path + "\n")
 
     except Exception as e:
-        write_log(f"❌ Failed to extract ZIP: {e}")
+        write_log(f" Failed to extract ZIP: {e}")
 
 # `.unitypackage` を解凍する関数
 def extract_unitypackage(unitypackage, extract_to):
@@ -66,9 +66,9 @@ def extract_unitypackage(unitypackage, extract_to):
     try:
         with tarfile.open(unitypackage, 'r') as tar:
             tar.extractall(unitypackage_output)
-        write_log(f"✅ Extracted UnityPackage: {unitypackage} → {unitypackage_output}")
+        write_log(f" Extracted UnityPackage: {unitypackage} → {unitypackage_output}")
     except Exception as e:
-        write_log(f"❌ Failed to extract .unitypackage: {e}")
+        write_log(f" Failed to extract .unitypackage: {e}")
         return
 
     # Unity のパス情報を解析
@@ -105,7 +105,7 @@ def extract_unitypackage(unitypackage, extract_to):
         # 権限を適切に設定（macOS / Linux）
         os.chmod(destFile, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
 
-        write_log(f"✅ Extracted Unity file: {filename} → {unity_dest}")
+        write_log(f" Extracted Unity file: {filename} → {unity_dest}")
 
 # スクリプトと同じディレクトリ内の `.zip` を探して解凍
 for root, _, files in os.walk(script_dir):
@@ -136,6 +136,6 @@ for root, dirs, files in os.walk(outputDir):
     write_log(f"{indent}📁 {os.path.basename(root)}/")
     subindent = " " * ((level + 1) * 4)
     for file in files:
-        write_log(f"{subindent}📄 {file}")
+        write_log(f"{subindent}{file}")
 
-write_log("\n🎉 Extraction complete!")
+write_log("\nExtraction complete!")
