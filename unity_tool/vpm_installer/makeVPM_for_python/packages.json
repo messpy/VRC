@@ -1,0 +1,24 @@
+{
+    "packages": [
+        {
+            "name": "Modular Avatar",
+            "package_id": "nadena.dev.modular-avatar",
+            "enabled": true
+        },
+        {
+            "name": "liltoon",
+            "package_id": "jp.lilxyzw.liltoon",
+            "enabled": true
+        },
+        {
+            "name": "VRCFury",
+            "package_id": "com.vrcfury.vrcfury",
+            "enabled": true
+        },
+        {
+            "name": "Gesture Manager",
+            "package_id": "vrchat.blackstartx.gesture-manager",
+            "enabled": true
+        }
+    ]
+}
