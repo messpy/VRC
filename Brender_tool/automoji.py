@@ -11,7 +11,7 @@ bpy.ops.object.delete(use_global=False)
 
 # 1. 文字生成と3D化
 font_curve = bpy.data.curves.new(type="FONT", name="MyTextCurve")
-font_curve.body = "指定された文字"  # 生成する文字を指定
+font_curve.body = text   # 生成する文字を指定
 font_curve.extrude = 0.1  # 3D化のための厚み（extrude値）を設定
 
 # 文字オブジェクトの作成とシーンへの追加
