@@ -1,8 +1,8 @@
+import os
 import bpy
 import math
 
 #blender --background --python script.py
-
 
 text = input("text:")
 # ※ オプション：シーン内の既存オブジェクトを削除してクリーンな状態にする
@@ -36,7 +36,12 @@ text_obj.select_set(True)
 bpy.context.view_layer.objects.active = text_obj
 
 # 出力ファイルのパスを設定（適宜変更してください）
-filepath = r"C:\Users\kenny\Documents" + "\\" + text+ ".fbx"
+filepath = absolute_path = os.path.abspath(__file__)
+
+# ファイル名 "a.fbx" を追加
+
+filepath = os.path.join(os.path.dirname(absolute_path), text + ".fbx")
+print(filepath)
 bpy.ops.export_scene.fbx(filepath=filepath, use_selection=True, axis_forward='-Z', axis_up='Y')
 
 print("FBXファイルとしてエクスポートしました:", filepath)
