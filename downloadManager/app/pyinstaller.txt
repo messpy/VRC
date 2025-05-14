@@ -1,0 +1,1 @@
+ pyinstaller --onefile --noconsole --add-data "extractors.py;." --add-data "utils.py;." --icon="C:\Users\kenny\Documents\git\messpy\VRC\downloadManager\app\kotobukisan.ico" main.pyw
