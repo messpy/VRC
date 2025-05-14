@@ -1,0 +1,18 @@
+2025-04-20 17:19:20 - 作業ディレクトリ: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile
+2025-04-20 17:19:20 - 共通のVRCフォルダ: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile\VRC を作成/確認しました。
+2025-04-20 17:19:20 - 検出されたZIPファイル: []
+2025-04-20 17:23:46 - 作業ディレクトリ: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile
+2025-04-20 17:23:46 - 共通のVRCフォルダ: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile\VRC を作成/確認しました。
+2025-04-20 17:23:46 - エラー: 指定されたファイルが存在しないか、ZIPファイルではありません: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile\Castroom.unitypackage
+2025-04-20 17:23:54 - 作業ディレクトリ: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile
+2025-04-20 17:23:54 - 共通のVRCフォルダ: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile\VRC を作成/確認しました。
+2025-04-20 17:23:54 - エラー: 指定されたファイルが存在しないか、ZIPファイルではありません: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile\Castroom.unitypackage
+2025-04-20 17:23:56 - 作業ディレクトリ: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile
+2025-04-20 17:23:56 - 共通のVRCフォルダ: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile\VRC を作成/確認しました。
+2025-04-20 17:23:56 - エラー: 指定されたファイルが存在しないか、ZIPファイルではありません: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile\Castroom.unitypackage
+2025-04-20 17:24:04 - 作業ディレクトリ: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile
+2025-04-20 17:24:04 - 共通のVRCフォルダ: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile\VRC を作成/確認しました。
+2025-04-20 17:24:04 - エラー: 解凍するZIPファイルを指定してください。
+2025-04-20 17:24:07 - 作業ディレクトリ: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile
+2025-04-20 17:24:07 - 共通のVRCフォルダ: C:\Users\kenny\Documents\git\messpy\VRC\unity_tool\unzip_ZipFile\VRC を作成/確認しました。
+2025-04-20 17:24:07 - エラー: 解凍するZIPファイルを指定してください。

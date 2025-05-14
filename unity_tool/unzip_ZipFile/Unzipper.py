@@ -37,7 +37,7 @@ for zip_file in zip_files:
     target_dir = os.path.join(working_dir, base_name)
     os.makedirs(target_dir, exist_ok=True)
     log_message(f"{target_dir} を作成しました。")
-    
+
     # ZIPファイルを対象フォルダへ移動
     new_zip_path = os.path.join(target_dir, zip_filename)
     try:
@@ -46,7 +46,7 @@ for zip_file in zip_files:
     except Exception as e:
         log_message(f"{zip_file} の移動に失敗しました: {e}")
         continue
-    
+
     # ZIPファイルを解凍
     try:
         with zipfile.ZipFile(new_zip_path, 'r') as z:
@@ -55,7 +55,7 @@ for zip_file in zip_files:
     except Exception as e:
         log_message(f"{new_zip_path} の解凍時にエラーが発生しました: {e}")
         continue
-    
+
     # target_dir 内を再帰的に探索して、unitypackage または fbx ファイルを探す
     target_files = []
     for root, dirs, files in os.walk(target_dir):
@@ -63,7 +63,7 @@ for zip_file in zip_files:
             lower_file = file.lower()
             if lower_file.endswith(".unitypackage") or lower_file.endswith(".fbx"):
                 target_files.append(os.path.join(root, file))
-    
+
     if target_files:
         log_message(f"対象ファイルが見つかりました: {target_files}")
         for file_path in target_files:
@@ -75,7 +75,7 @@ for zip_file in zip_files:
                     dest_path = os.path.join(vrc_common_dir, f"{base}_new{ext}")
                 shutil.move(file_path, dest_path)
                 log_message(f"{file_path} を {dest_path} に移動しました。")
-                
+
                 # unitypackage の場合、内容一覧をテキストファイルとして出力
                 if dest_path.lower().endswith(".unitypackage"):
                     try:
