@@ -13,7 +13,7 @@ public class ComponentHighlighterUI : EditorWindow
     private string searchTerm = "";
     private Vector2 scrollPos;
 
-    [MenuItem("Tools/コンポーネントハイライト（検索付き）")]
+    [MenuItem("KennyTools/コンポーネントハイライト")]
     public static void ShowWindow()
     {
         GetWindow<ComponentHighlighterUI>("コンポーネント検索");
@@ -102,7 +102,20 @@ public class ComponentHighlighterUI : EditorWindow
         GameObject go = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
         if (go == null) return;
 
-        if (matchedObjects.Contains(go))
+        // 自身または親がmatchedObjectsに含まれていれば色付け
+        GameObject current = go;
+        bool isMatchedOrParent = false;
+        while (current != null)
+        {
+            if (matchedObjects.Contains(current))
+            {
+                isMatchedOrParent = true;
+                break;
+            }
+            current = current.transform.parent ? current.transform.parent.gameObject : null;
+        }
+
+        if (isMatchedOrParent)
         {
             EditorGUI.DrawRect(selectionRect, new Color(0.4f, 0.6f, 1f, 0.3f)); // 青
         }
