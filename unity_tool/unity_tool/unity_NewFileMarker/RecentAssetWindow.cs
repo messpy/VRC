@@ -13,7 +13,7 @@ public class RecentAssetWindow : EditorWindow
     [MenuItem("KennyTools/最近のアセット一覧を表示")]
     public static void ShowWindow()
     {
-        GetWindow<RecentAssetWindow2>("最近のアセット");
+        GetWindow<RecentAssetWindow>("最近のアセット");
         RefreshAssetList();
     }
 
