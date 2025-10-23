@@ -3,7 +3,7 @@ using UnityEngine;
 using VRC.SDKBase;
 using VRC.Udon;
 
-public class Birthday1 : UdonSharpBehaviour
+public class EventPeriodActivator : UdonSharpBehaviour
 {
     [Header("Nightmode Time Settings (例: 22なら夜10時開始、6なら朝6時終了)")]
     [Range(0, 23)]
