@@ -2,3 +2,7 @@
 # ignore large local assets
 geometory/data/
 *.insv
+
+# ignore videos
+*.mp4
+*.insv
