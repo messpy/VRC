@@ -1,0 +1,4 @@
+
+# ignore large local assets
+geometory/data/
+*.insv
