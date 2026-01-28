@@ -10,7 +10,7 @@ PROJECT_ROOT = Path(__file__).parent.parent
 # フォルダパス
 DATA_DIR = PROJECT_ROOT / "data"
 DATA_INPUT_DIR = DATA_DIR / "input"
-OUTPUT_DIR = PROJECT_ROOT / "output"
+OUTPUT_DIR = DATA_DIR / "output"
 
 # ==================== フレーム抽出設定 ====================
 # video_frame_extractor.py で使用
