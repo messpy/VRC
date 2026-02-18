@@ -5,6 +5,7 @@ using VRC.SDK3.Components.Video;
 using VRC.SDK3.Video.Components.Base;
 using VRC.SDKBase;
 using VRC.Udon.Common.Enums;
+// Packages\net.kwxxw.yama-stream\Runtime\Internal 配下にあるプログラムを置換
 
 namespace Yamadev.YamaStream
 {
@@ -175,6 +176,8 @@ namespace Yamadev.YamaStream
         {
             if (_audioSource != null && _errorAudioClip != null)
             {
+                _audioSource.Stop();
+                _audioSource.loop = false;
                 _audioSource.PlayOneShot(_errorAudioClip);
             }
         }
