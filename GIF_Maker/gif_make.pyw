@@ -81,7 +81,7 @@ def estimate_gif_size():
 
     # 各フレームの生データサイズ（バイト）を (幅×高さ) として、圧縮率20倍で推定
     raw_pixel_count = region_width * region_height * num_frames
-    compression_ratio = 20.0  # 仮の圧縮率
+    compression_ratio = 18.0  # 仮の圧縮率
     estimated_bytes = raw_pixel_count / compression_ratio
     estimated_mb = estimated_bytes / (1024 * 1024)
     total_duration = num_frames * frame_delay
