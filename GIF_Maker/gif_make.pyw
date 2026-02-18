@@ -110,7 +110,7 @@ def capture_gif():
 
     # 出力ファイル名に実行日時を付与（自動保存）
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    gif_filename = f"output_{timestamp}.gif"
+    gif_filename = f"data/output_{timestamp}.gif"
 
     # 4cmをピクセルに換算（96 DPIの場合）
     dpi = 96
