@@ -1,6 +1,7 @@
 data/
 logs/
 db/
+old/
 __pycache__/
 *.pyc
 *.pyo
