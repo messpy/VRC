@@ -1,6 +1,6 @@
 data/
 logs/
-
+db/
 __pycache__/
 *.pyc
 *.pyo
