@@ -21,6 +21,7 @@ class vrcSendDiscord:
 
 dt_now = datetime.datetime.now()
 vrcSendDiscord_instance = vrcSendDiscord(r"C:\Users\kenny\Pictures\VRChat"
-                                ,dt_now
-                                ,"https://discord.com/api/webhooks/1308668242323181591/TUrcutI1vtJlgM5Zt3Bbzd8UyUx8hKqf5ZmTElGScZ0nQJRlQIXZYWpAb-b_S0pB5IIv")
+                                
+                                ,"https://discord.com/api/webhooks/")
+
 vrcSendDiscord_instance.getfld(vrcSendDiscord_instance.yearmonth_now)
