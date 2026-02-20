@@ -1,0 +1,19 @@
+=== 処理開始 ===
+2025-04-20 17:48:06 - JSONファイル downloadHistory_AE.json が存在しません。
+2025-04-20 17:48:06 - 作業フォルダ: C:\Users\kenny\Documents\git\messpy\VRC\downloadManager\app
+2025-04-20 17:48:06 - フォルダ内ファイル一覧:
+2025-04-20 17:48:06 -  - BoothFile_unzipper.py
+2025-04-20 17:48:06 -  - Castroom
+2025-04-20 17:48:06 -  - Castroom.unitypackage
+2025-04-20 17:48:06 -  - ObjectPositionReset.zip
+2025-04-20 17:48:06 -  - process.log
+2025-04-20 17:48:06 -  - unitypackage簡単解凍ツール.pyw
+2025-04-20 17:48:06 - ZIPファイル検出: ObjectPositionReset.zip
+2025-04-20 17:48:06 - 解凍開始: C:\Users\kenny\Documents\git\messpy\VRC\downloadManager\app\ObjectPositionReset.zip
+2025-04-20 17:48:06 - 解凍先フォルダ名: ObjectPositionReset
+2025-04-20 17:48:06 - ZIPファイル内容: ['ObjectPositionReset.unitypackage']
+2025-04-20 17:48:06 - 解凍成功: C:\Users\kenny\Documents\git\messpy\VRC\downloadManager\app\ObjectPositionReset.zip -> C:\Users\kenny\Documents\git\messpy\VRC\downloadManager\app\ObjectPositionReset
+2025-04-20 17:48:06 - ZIPファイル移動完了: C:\Users\kenny\Documents\git\messpy\VRC\downloadManager\app\ObjectPositionReset.zip -> C:\Users\kenny\Documents\git\messpy\VRC\downloadManager\app\ObjectPositionReset
+2025-04-20 17:48:06 - 情報記録開始: C:\Users\kenny\Documents\git\messpy\VRC\downloadManager\app\ObjectPositionReset
+2025-04-20 17:48:06 - 情報記録完了: C:\Users\kenny\Documents\git\messpy\VRC\downloadManager\app\ObjectPositionReset
+2025-04-20 17:48:06 - スクリプト自身の更新日時を変更しました: C:\Users\kenny\Documents\git\messpy\VRC\downloadManager\app\BoothFile_unzipper.py
